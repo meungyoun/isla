@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>네일팁 사이즈 추천기</title>
+  <style>
+  @font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+  body {
+    font-family: 'Pretendard-Regular', sans-serif;
+    background: #b9ccb5;
+    padding: 30px;
+    text-align: center;
+    font-size: 18px;
+  }
+
+  h1 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 28px;
+  }
+
+  input {
+    padding: 12px;
+    width: 160px;
+    font-size: 17px;
+    margin-right: 10px;
+  }
+
+  button {
+    padding: 12px 18px;
+    font-size: 17px;
+    background-color: #7e9e85;  /* 기본 진한 초록 */
+    color: black;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  button:hover {
+    background-color: #6d8973;  /* hover 시 더 어두운 초록 */
+  }
+
+  table {
+    width: 100%;
+    max-width: 600px;
+    margin: 30px auto;
+    border-collapse: collapse;
+    background: white;
+    font-size: 16px;
+  }
+
+  th, td {
+    border: 1px solid #aaa;
+    padding: 12px;
+  }
+
+  th {
+    background-color: #6d8973;
+  }
+</style>
+
+</head>
+<body>
+  <h1>손톱 사이즈 찾기</h1>
+  <input type="number" step="0.1" id="inputWidth" placeholder="가로폭 입력 (mm)">
+  <button onclick="findSizes()">추천 받기</button>
+  <table>
+    <thead>
+      <tr>
+        <th>쉐입</th>
+        <th>추천 호수</th>
+        <th>가로(mm)</th>
+      </tr>
+    </thead>
+    <tbody id="resultBody"></tbody>
+  </table>
+
+<script>
+const sizeData = {
+  "숏오발": {
+    1: 13.0, 2: 11.7, 3: 10.6, 4: 9.7, 5: 9.2, 6: 8.9, 7: 8.5, 8: 7.5, 9: 7.0, 10: 6.0
+  },
+  "숏코핀": {
+    0: 14.16, 1: 13.18, 2: 12.17, 3: 11.73, 4: 10.98, 5: 10.48, 6: 9.99, 7: 9.06, 8: 8.57, 9: 7.87, 10: 7.2, 11: 6.47
+  },
+    "숏라운드": {
+    0: 12.37, 1: 11.79, 2: 11.09, 3: 10.31, 4: 9.70, 5: 9.56, 6: 9.06, 7: 8.93, 8: 8.54, 9: 8.15
+  },
+  "코핀": {
+    0: 13.5, 1: 12.5, 2: 12.5, 3: 11.5, 4: 10.5, 5: 10.0, 6: 9.0, 7: 8.0, 8: 7.5, 9: 7.0
+  },
+  "아몬드": {
+    0: 13.6, 1: 13.51, 2: 11.41, 3: 11.35, 4: 10.98, 5: 10.21, 6: 8.83, 7: 7.31, 8: 7.09, 9: 6.79
+  },
+  "숏아몬드": {
+    0: 15.0, 1: 14.0, 2: 13.5, 3: 13.0, 4: 12.5, 5: 12.0, 6: 11.0, 7: 10.0, 8: 9.0, 9: 8.0
+  },
+  "덕": {
+    0: 13.6, 1: 12.8, 2: 12.3, 3: 11.7, 4: 11.2, 5: 10.7, 6: 10.2, 7: 9.7, 8: 9.6, 9: 9.0
+  }
+};
+
+function findSizes() {
+  const input = parseFloat(document.getElementById("inputWidth").value);
+  const tbody = document.getElementById("resultBody");
+  tbody.innerHTML = "";
+  if (isNaN(input)) return;
+
+  Object.entries(sizeData).forEach(([shape, sizes]) => {
+    let closestDiff = Infinity;
+    let closestSize = null;
+    let closestWidth = null;
+    Object.entries(sizes).forEach(([num, width]) => {
+      const diff = Math.abs(input - width);
+      if (diff < closestDiff) {
+        closestDiff = diff;
+        closestSize = num;
+        closestWidth = width;
+      }
+    });
+    const row = `<tr><td>${shape}</td><td>${closestSize}호</td><td>${closestWidth} mm</td></tr>`;
+    tbody.innerHTML += row;
+  });
+}
+</script>
+
+</body>
+</html>
