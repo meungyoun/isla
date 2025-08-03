@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>네일팁 사이즈 추천기</title>
+  
   <style>
 @font-face {
   font-family: 'Pretendard-Regular';
@@ -12,17 +13,17 @@
   font-style: normal;
 }
 
-html {
+html, body {
   height: 100%;
+  margin: 0;
 }
 
 body {
   font-family: 'Pretendard-Regular', sans-serif;
-  background: #b9ccb5; /* 말차 연둣빛 단색 */
+  background: linear-gradient(145deg, #e5f0e2, #b9ccb5); /* 말차 그라데이션 */
   padding: 30px;
   text-align: center;
   font-size: 18px;
-  margin: 0;
   min-height: 100vh;
 }
 
@@ -44,7 +45,7 @@ input {
 button {
   padding: 12px 18px;
   font-size: 17px;
-  background-color: #7e9e85; /* 진한 초록 */
+  background-color: #7e9e85;
   color: white;
   border: none;
   border-radius: 8px;
@@ -54,18 +55,18 @@ button {
 }
 
 button:hover {
-  background-color: #6d8973; /* hover 시 더 어두운 초록 */
+  background-color: #6d8973;
   transform: translateY(-2px);
 }
 
 table {
   width: 100%;
-  max-width: 600px;
+  max-width: 720px;
   margin: 30px auto;
   border-collapse: collapse;
   background: white;
   font-size: 16px;
-  border-radius: 11px;
+  border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
@@ -78,9 +79,7 @@ th, td {
 th {
   background-color: #a9c5ad;
 }
-</style>
-
-
+  </style>
 </head>
 <body>
   <h1>손톱 사이즈 찾기</h1>
@@ -92,39 +91,116 @@ th {
         <th>쉐입</th>
         <th>추천 호수</th>
         <th>가로(mm)</th>
+        <th>세로(mm)</th>
       </tr>
     </thead>
     <tbody id="resultBody"></tbody>
   </table>
 
-<script>
+  <script>
 const sizeData = {
   "숏오발": {
-    1: 13.0, 2: 11.7, 3: 10.6, 4: 9.7, 5: 9.2, 6: 8.9, 7: 8.5, 8: 7.5, 9: 7.0, 10: 6.0
+    1: { width: 13.0, height: 20.0 },
+    2: { width: 11.7, height: 19.2 },
+    3: { width: 10.6, height: 17.4 },
+    4: { width: 9.7, height: 16.7 },
+    5: { width: 9.2, height: 15.4 },
+    6: { width: 8.9, height: 15.0 },
+    7: { width: 8.5, height: 14.7 },
+    8: { width: 7.5, height: 14.1 },
+    9: { width: 7.0, height: 13.7 },
+    10: { width: 6.0, height: 13.0 }
   },
   "숏코핀": {
-    0: 14.16, 1: 13.18, 2: 12.17, 3: 11.73, 4: 10.98, 5: 10.48, 6: 9.99, 7: 9.06, 8: 8.57, 9: 7.87, 10: 7.2, 11: 6.47
+    0: { width: 14.16, height: 19.1 },
+    1: { width: 13.18, height: 18.66 },
+    2: { width: 12.17, height: 18.06 },
+    3: { width: 11.73, height: 17.6 },
+    4: { width: 10.98, height: 17.15 },
+    5: { width: 10.48, height: 16.64 },
+    6: { width: 9.99, height: 16.28 },
+    7: { width: 9.06, height: 15.86 },
+    8: { width: 8.57, height: 15.12 },
+    9: { width: 7.87, height: 14.72 },
+    10: { width: 7.2, height: 14.0 },
+    11: { width: 6.47, height: 14.02 }
   },
-    "숏라운드": {
-    0: 12.37, 1: 11.79, 2: 11.09, 3: 10.31, 4: 9.70, 5: 9.56, 6: 9.06, 7: 8.93, 8: 8.54, 9: 8.15
+  "숏라운드": {
+    0: { width: 12.37, height: 16.2 },
+    1: { width: 11.79, height: 15.9 },
+    2: { width: 11.09, height: 15.74 },
+    3: { width: 10.31, height: 14.55 },
+    4: { width: 9.70, height: 14.24 },
+    5: { width: 9.56, height: 14.1 },
+    6: { width: 9.06, height: 14.04 },
+    7: { width: 8.93, height: 13.83 },
+    8: { width: 8.54, height: 13.42 },
+    9: { width: 8.15, height: 12.09 },
+    10: { width: 7.86, height: 12.09 },
+    11: { width: 6.71, height: 10.97 }
   },
-    "숏아몬드": {
-    0: 15.0, 1: 14.0, 2: 13.5, 3: 12.5, 4: 11.5, 5: 10.5, 6: 10.0, 7: 9.0, 8: 8.0, 9: 7.0
+  "숏아몬드": {
+    0: { width: 13.08, height: 19.1 },
+    1: { width: 12.73, height: 19.01 },
+    2: { width: 11.76, height: 18.84 },
+    3: { width: 10.81, height: 18.18 },
+    4: { width: 10.37, height: 17.65 },
+    5: { width: 10.1, height: 17.07 },
+    6: { width: 9.56, height: 16.58 },
+    7: { width: 9.33, height: 15.83 },
+    8: { width: 8.83, height: 15.35 },
+    9: { width: 7.96, height: 13.98 },
+    10: { width: 7.33, height: 13.74 }
   },
-    "오발": {
-    0: 14.0, 1: 13.0, 2: 12.0, 3: 11.0, 4: 10.0, 5: 9.5, 6: 9.0, 7: 8.0, 8: 7.5, 9: 6.5
-    },
+  "오발": {
+    0: { width: 14.0, height: 24 },
+    1: { width: 13.0, height: 23 },
+    2: { width: 12.0, height: 22 },
+    3: { width: 11.0, height: 21 },
+    4: { width: 10.0, height: 20 },
+    5: { width: 9.5, height: 19 },
+    6: { width: 9.0, height: 18 },
+    7: { width: 8.0, height: 17 },
+    8: { width: 7.5, height: 16 },
+    9: { width: 6.5, height: 15 }
+  },
   "코핀": {
-    0: 13.5, 1: 12.5, 2: 12.0, 3: 11.5, 4: 10.5, 5: 10.0, 6: 9.0, 7: 8.0, 8: 7.5, 9: 7.0
+    0: { width: 13.5, height: 26 },
+    1: { width: 12.5, height: 25 },
+    2: { width: 12.0, height: 25 },
+    3: { width: 11.5, height: 24 },
+    4: { width: 10.5, height: 23 },
+    5: { width: 10.0, height: 22.5 },
+    6: { width: 9.0, height: 22 },
+    7: { width: 8.0, height: 21 },
+    8: { width: 7.5, height: 21 },
+    9: { width: 7.0, height: 20 }
   },
   "아몬드": {
-    0: 13.6, 1: 13.51, 2: 11.41, 3: 11.35, 4: 10.98, 5: 10.21, 6: 8.83, 7: 7.31, 8: 7.09, 9: 6.79
+    0: { width: 13.6, height: 24.8 },
+    1: { width: 13.51, height: 24.1 },
+    2: { width: 11.41, height: 23.52 },
+    3: { width: 11.35, height: 23.17 },
+    4: { width: 10.98, height: 21.65 },
+    5: { width: 10.21, height: 21.32 },
+    6: { width: 8.83, height: 20.22 },
+    7: { width: 7.31, height: 19.46 },
+    8: { width: 7.09, height: 18.75 },
+    9: { width: 6.79, height: 18.0 }
   },
   "덕": {
-    0: 13.6, 1: 12.8, 2: 12.3, 3: 11.7, 4: 11.2, 5: 10.7, 6: 10.2, 7: 9.7, 8: 9.6, 9: 9.0, 10: 8.2
+    0: { width: 18.5, height: 28.3 },
+    1: { width: 17.4, height: 27.2 },
+    2: { width: 16.6, height: 26 },
+    3: { width: 15.5, height: 25.4 },
+    4: { width: 14.2, height: 22.8 },
+    5: { width: 13.7, height: 20.9 },
+    6: { width: 13.7, height: 20.9 },
+    7: { width: 12.3, height: 20.7 },
+    8: { width: 11.6, height: 17.8 },
+    9: { width: 10.7, height: 16.6 }
   }
 };
-
 
 function findSizes() {
   const input = parseFloat(document.getElementById("inputWidth").value);
@@ -134,21 +210,21 @@ function findSizes() {
 
   Object.entries(sizeData).forEach(([shape, sizes]) => {
     let closestDiff = Infinity;
-    let closestSize = null;
-    let closestWidth = null;
-    Object.entries(sizes).forEach(([num, width]) => {
+    let closestNum = null;
+
+    for (const [num, { width }] of Object.entries(sizes)) {
       const diff = Math.abs(input - width);
       if (diff < closestDiff) {
         closestDiff = diff;
-        closestSize = num;
-        closestWidth = width;
+        closestNum = num;
       }
-    });
-    const row = `<tr><td>${shape}</td><td>${closestSize}호</td><td>${closestWidth} mm</td></tr>`;
+    }
+
+    const selected = sizes[closestNum];
+    const row = `<tr><td>${shape}</td><td>${closestNum}호</td><td>${selected.width} mm</td><td>${selected.height} mm</td></tr>`;
     tbody.innerHTML += row;
   });
 }
-</script>
-
+  </script>
 </body>
 </html>
