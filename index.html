@@ -1,90 +1,53 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>네일팁 사이즈 추천기</title>
-  
   <style>
-@font-face {
-  font-family: 'Pretendard-Regular';
-  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
-  font-weight: 400;
-  font-style: normal;
-}
-
-html, body {
-  height: 100%;
-  margin: 0;
-}
-
-body {
-  font-family: 'Pretendard-Regular', sans-serif;
-  background: linear-gradient(145deg, #e5f0e2, #b9ccb5); /* 말차 그라데이션 */
-  padding: 30px;
-  text-align: center;
-  font-size: 18px;
-  min-height: 100vh;
-}
-
-h1 {
-  color: #333;
-  margin-bottom: 20px;
-  font-size: 28px;
-}
-
-input {
-  padding: 12px;
-  width: 160px;
-  font-size: 17px;
-  margin-right: 10px;
-  border: 1px solid #aaa;
-  border-radius: 6px;
-}
-
-button {
-  padding: 12px 18px;
-  font-size: 17px;
-  background-color: #7e9e85;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  transition: background-color 0.3s, transform 0.2s;
-}
-
-button:hover {
-  background-color: #6d8973;
-  transform: translateY(-2px);
-}
-
-table {
-  width: 100%;
-  max-width: 720px;
-  margin: 30px auto;
-  border-collapse: collapse;
-  background: white;
-  font-size: 16px;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-th, td {
-  border: 1px solid #ccc;
-  padding: 12px;
-}
-
-th {
-  background-color: #a9c5ad;
-}
+    @font-face {
+      font-family: 'Pretendard-Regular';
+      src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+      font-weight: 400;
+      font-style: normal;
+    }
+    html, body { height:100%; margin:0; }
+    body {
+      font-family:'Pretendard-Regular', sans-serif;
+      background: linear-gradient(145deg, #e5f0e2, #b9ccb5);
+      padding:30px; text-align:center; font-size:18px; min-height:100vh;
+    }
+    h1 { color:#333; margin-bottom:20px; font-size:28px; }
+    input {
+      padding:12px; width:160px; font-size:17px; margin-right:10px;
+      border:1px solid #aaa; border-radius:6px;
+    }
+    button {
+      padding:12px 18px; font-size:17px; background:#7e9e85; color:#fff; border:none;
+      border-radius:8px; cursor:pointer; box-shadow:0 4px 8px rgba(0,0,0,.15);
+      transition: background-color .3s, transform .2s;
+    }
+    button:hover { background:#6d8973; transform: translateY(-2px); }
+    table {
+      width:100%; max-width:720px; margin:30px auto; border-collapse:collapse;
+      background:#fff; font-size:16px; border-radius:12px; overflow:hidden;
+      box-shadow:0 2px 6px rgba(0,0,0,.1);
+    }
+    th, td { border:1px solid #ccc; padding:12px; }
+    th { background:#a9c5ad; }
+    .shape-cell {
+      display:flex; align-items:center; gap:10px;
+    }
+    .shape-icon {
+      width:36px; height:36px; object-fit:contain; flex-shrink:0;
+    }
   </style>
 </head>
 <body>
   <h1>손톱 사이즈 찾기</h1>
-  <input type="number" step="0.1" id="inputWidth" placeholder="가로폭 입력 (mm)">
+  <input type="number" step="0.1" id="inputWidth" placeholder="가로폭 입력 (mm)" />
   <button onclick="findSizes()">추천 받기</button>
+
   <table>
     <thead>
       <tr>
@@ -97,7 +60,19 @@ th {
     <tbody id="resultBody"></tbody>
   </table>
 
-  <script>
+<script>
+const shapeToIcon = {
+  "숏오발": "icon/short_oval.png",
+  "숏코핀": "icon/short_coffin.png",
+  "숏라운드": "icon/short_round.png",
+  "숏아몬드": "icon/short_almond.png",
+  "오발": "icon/oval.png",
+  "코핀": "icon/coffin.png",
+  "아몬드": "icon/almond.png",
+  "스퀘어": "icon/square.png"
+};
+
+  
 const sizeData = {
   "숏오발": {
     1: { width: 13.0, height: 20.0 },
@@ -188,43 +163,88 @@ const sizeData = {
     8: { width: 7.09, height: 18.75 },
     9: { width: 6.79, height: 18.0 }
   },
-  "덕": {
-    0: { width: 18.5, height: 28.3 },
-    1: { width: 17.4, height: 27.2 },
-    2: { width: 16.6, height: 26 },
-    3: { width: 15.5, height: 25.4 },
-    4: { width: 14.2, height: 22.8 },
-    5: { width: 13.7, height: 20.9 },
-    6: { width: 13.7, height: 20.9 },
-    7: { width: 12.3, height: 20.7 },
-    8: { width: 11.6, height: 17.8 },
-    9: { width: 10.7, height: 16.6 }
+  "스퀘어": {
+    0: { width: 11, height: 24 },
+    1: { width: 10.5, height: 23 },
+    2: { width: 10.5, height: 22.5 },
+    3: { width: 10, height: 22.5 },
+    4: { width: 9.5, height: 22 },
+    5: { width: 9.5, height: 21.5 },
+    6: { width: 9, height: 21.5 },
+    7: { width: 8.5, height: 21 },
+    8: { width: 8, height: 21 },
+    9: { width: 7.5, height: 20.5 },
+    10: { width: 7, height: 19 },
+    11: { width: 6, height: 19 }
   }
 };
 
 function findSizes() {
-  const input = parseFloat(document.getElementById("inputWidth").value);
-  const tbody = document.getElementById("resultBody");
-  tbody.innerHTML = "";
-  if (isNaN(input)) return;
-
-  Object.entries(sizeData).forEach(([shape, sizes]) => {
-    let closestDiff = Infinity;
-    let closestNum = null;
-
-    for (const [num, { width }] of Object.entries(sizes)) {
-      const diff = Math.abs(input - width);
-      if (diff < closestDiff) {
-        closestDiff = diff;
-        closestNum = num;
-      }
+  try {
+    const inputEl = document.getElementById("inputWidth");
+    const tbody = document.getElementById("resultBody");
+    if (!inputEl || !tbody) {
+      console.error("필수 엘리먼트를 찾지 못했습니다.");
+      return;
     }
 
-    const selected = sizes[closestNum];
-    const row = `<tr><td>${shape}</td><td>${closestNum}호</td><td>${selected.width} mm</td><td>${selected.height} mm</td></tr>`;
-    tbody.innerHTML += row;
-  });
+    const input = parseFloat(inputEl.value);
+    tbody.innerHTML = "";
+    if (isNaN(input)) return;
+
+    const EPS = 1e-6;
+
+    Object.entries(sizeData).forEach(([shape, sizes]) => {
+      const entries = Object.entries(sizes).map(([num, obj]) => ({
+        num: Number(num),
+        width: obj.width,
+        height: obj.height,
+        diff: Math.abs(input - obj.width)
+      }));
+
+      const minDiff = Math.min(...entries.map(e => e.diff));
+      const matched = entries
+        .filter(e => Math.abs(e.diff - minDiff) <= EPS)
+        .sort((a, b) => a.num - b.num);
+
+      const hosuStr = matched.map(e => `${e.num}호`).join(" / ");
+      const widthList = Array.from(new Set(matched.map(e => e.width.toString())));
+      const widthStr = widthList.join(" / ") + " mm";
+      const heightStr = matched.map(e => e.height).join(" / ") + " mm";
+
+      const iconSrc = shapeToIcon[shape] || "";
+      const row = `<tr>
+        <td class="shape-cell">
+          ${iconSrc ? `<img class="shape-icon" src="${iconSrc}" alt="${shape}">` : ""}
+          <span>${shape}</span>
+        </td>
+        <td>${hosuStr}</td>
+        <td>${widthStr}</td>
+        <td>${heightStr}</td>
+      </tr>`;
+      tbody.insertAdjacentHTML("beforeend", row);
+    });
+  } catch (err) {
+    console.error("findSizes 실행 중 오류:", err);
+  }
 }
-  </script>
-</body>
-</html>
+
+// DOM 준비 후 엔터/입력/클릭 이벤트 모두 연결
+document.addEventListener("DOMContentLoaded", () => {
+  const inputEl = document.getElementById("inputWidth");
+  const btn = document.querySelector("button");
+
+  if (btn) btn.addEventListener("click", findSizes);
+  if (inputEl) {
+    inputEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") findSizes();
+    });
+    inputEl.addEventListener("input", () => {
+      // 즉시 미리보기 원치 않으면 이 줄은 주석 처리
+      if (inputEl.value !== "") findSizes();
+    });
+  }
+
+  console.log("events bound");
+});
+</script>
